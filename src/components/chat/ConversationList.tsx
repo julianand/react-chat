@@ -21,7 +21,7 @@ function lastMessagePreview(conversation: Conversation): string {
   if (!conversation.lastMessage) return '';
 
   const last = conversation.lastMessage;
-  return `${last.userId === 'u0' ? 'Tú: ' : ''}${last.text}`
+  return `${last.userId === 'u0' ? 'You: ' : ''}${last.text}`
 }
 
 function ConversationList() {
@@ -57,7 +57,7 @@ function ConversationList() {
     <div className="conv-sidebar">
       <div className="conv-sidebar__header">
         <Title level={4} className="conv-sidebar__title">
-          Mensajes
+          Messages
         </Title>
       </div>
       {isLoading ? (

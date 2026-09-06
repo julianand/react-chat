@@ -1,75 +1,85 @@
-# React + TypeScript + Vite
+# React Chat
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A chat application prototype built with React 19, TypeScript, Vite, and Ant Design, fully wired to Redux Toolkit and RTK Query.
 
-Currently, two official plugins are available:
+There is no real backend: data is served from an in-memory mock database (`DBMock`) through RTK Query with simulated network latency, so the app runs entirely in the browser. Incoming messages are simulated every 10 seconds with random comments fetched from [dummyjson.com](https://dummyjson.com) — this requires network access (see [Known limitations](#known-limitations)).
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Features
 
-## React Compiler
+- Conversation sidebar with avatars, unread indicators, and last-message previews
+- Chat window with message bubbles (own vs. peer), timestamps, and auto-mark-as-read
+- Message composer with auto-growing textarea (Enter to send, Shift+Enter for a new line)
+- Unread badges clear when a conversation is opened
+- Simulated incoming messages via `startMessageSimulation()`
+- 500ms artificial latency on every mock "request"
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Tech stack
 
-## Expanding the ESLint configuration
+- [React 19](https://react.dev) + [TypeScript 6](https://www.typescriptlang.org)
+- [Vite 8](https://vite.dev)
+- [Ant Design v6](https://ant.design) (`antd`, `@ant-design/icons`)
+- [Redux Toolkit](https://redux-toolkit.js.org) + [React Redux](https://react-redux.js.org) with RTK Query for data fetching
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Getting started
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+Open the printed URL in your browser. The dev server runs on port 5173 by default.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Scripts
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+| Command            | Description                                     |
+| ------------------ | ----------------------------------------------- |
+| `npm run dev`      | Start the Vite dev server                       |
+| `npm run build`    | Typecheck (`tsc -b`) + production build         |
+| `npm run lint`     | Run ESLint over the whole repo                  |
+| `npm run preview`  | Serve the production build locally              |
+
+## Project structure
 
 ```
+src/
+├── App.tsx                      # Layout, store provider, simulation startup
+├── types.ts                     # Message, Conversation, User, UserConversation
+├── components/chat/
+│   ├── ConversationList.tsx     # Sidebar: antd Menu with avatars/unread dots
+│   ├── ChatWindow.tsx           # Header + message list + auto mark-as-read
+│   ├── MessageRow.tsx           # Own/peer message bubbles
+│   └── MessageComposer.tsx      # TextArea + send button
+├── mocks/
+│   ├── data.mock.ts             # Seed data (conversations, users, messages)
+│   └── db.mock.ts               # DBMock singleton: in-memory "database"
+└── store/
+    ├── store.ts                 # configureStore (APIs + ui slice)
+    ├── conversations.api.ts     # getConversations query + markAsRead mutation
+    ├── messages.api.ts          # getMessages query + sendMessage mutation
+    ├── ui.slice.ts              # activeConversationId
+    ├── simulation.ts            # 10s incoming-message simulator
+    └── store.utils.ts           # getMockBaseFn (500ms latency base query)
+```
+
+## Architecture
+
+Data flows through a single path:
+
+```
+React components → RTK Query endpoints → getMockBaseFn → DBMock (in-memory DB)
+```
+
+- **`DBMock`** (`src/mocks/db.mock.ts`) is a singleton holding conversations, users, and messages in memory. It computes conversation metadata (`lastMessage`, `name`, `color`, `otherUserId`) on the fly and logs every call with `console.log`.
+- **`getMockBaseFn`** (`src/store/store.utils.ts`) is the RTK Query base query: it awaits a 500ms timeout, invokes the mock-db function, and translates thrown errors into error responses.
+- **RTK Query tags** invalidate the conversation list whenever messages change, keeping the sidebar and unread badges in sync.
+- **`sendMessage`** optimistically appends the new message to the `getMessages` cache and marks the peer's conversation as unread.
+- **`ui.slice`** stores the active conversation id and auto-selects the first conversation once the list loads.
+- **`simulation.ts`** (`startMessageSimulation`) runs a 10s interval in `App.tsx`: it picks a random conversation, fetches a random comment from dummyjson.com, and sends it as the peer.
+
+The current user is hardcoded as `"u0"` throughout the app; there is no authentication or user switching yet.
+
+## Known limitations
+
+- **Network dependency**: the incoming-message simulator fetches from `https://dummyjson.com`; without network access the fetch rejects and produces unhandled errors every 10s tick.
+- No real backend — all data is in-memory and resets on page reload.
+- No router, no test framework, single hardcoded user (`"u0"`).

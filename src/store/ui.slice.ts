@@ -18,7 +18,8 @@ const uiSlice = createSlice({
   extraReducers(builder) {
     builder.addMatcher(conversationApi.endpoints.getConversations.matchFulfilled, (state, action) => {
       if (state.activeConversationId) return;
-      state.activeConversationId = action.payload[0].conversationId;
+      const first = action.payload[0];
+      if (first) state.activeConversationId = first.conversationId;
     });
   },
 });

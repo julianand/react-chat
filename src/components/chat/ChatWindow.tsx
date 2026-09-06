@@ -22,7 +22,7 @@ function ChatWindow() {
   useEffect(() => {
     if (!uc || uc.read) return;
     markAsRead({ userId: uc.userId, conversationId: uc.conversationId });
-  }, [uc])
+  }, [uc, markAsRead])
 
   if (!activeConversationId) return;
 

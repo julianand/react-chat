@@ -36,7 +36,7 @@ function MessageComposer() {
             handleSend();
           }
         }}
-        placeholder="Escribe un mensaje..."
+        placeholder="Type a message..."
         autoSize={{ minRows: 1, maxRows: 4 }}
         maxLength={1000}
         className="chat-composer__input"
@@ -48,7 +48,7 @@ function MessageComposer() {
         onClick={handleSend}
         loading={isLoading}
         disabled={!text.trim()}
-        aria-label="Enviar mensaje"
+        aria-label="Send message"
       />
     </div>
   );

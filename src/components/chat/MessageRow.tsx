@@ -1,7 +1,7 @@
 import { Avatar } from 'antd'
 import type { Message } from '../../types'
 
-const ME_NAME = 'Tú'
+const ME_NAME = 'You'
 const ME_COLOR = '#722ed1'
 
 interface MessageRowProps {
@@ -10,8 +10,8 @@ interface MessageRowProps {
   peerColor: string
 }
 
-const WEEKDAY_FORMAT = new Intl.DateTimeFormat('es', { weekday: 'short' })
-const TIME_FORMAT = new Intl.DateTimeFormat('es', {
+const WEEKDAY_FORMAT = new Intl.DateTimeFormat('en', { weekday: 'short' })
+const TIME_FORMAT = new Intl.DateTimeFormat('en', {
   hour: '2-digit',
   minute: '2-digit',
   hour12: false,
