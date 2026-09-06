@@ -16,7 +16,6 @@ const uiSlice = createSlice({
     }
   },
   extraReducers(builder) {
-    builder.addCase
     builder.addMatcher(conversationApi.endpoints.getConversations.matchFulfilled, (state, action) => {
       if (state.activeConversationId) return;
       state.activeConversationId = action.payload[0].conversationId;
