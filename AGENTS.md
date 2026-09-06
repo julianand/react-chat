@@ -9,7 +9,14 @@ This repo is indexed by CodeGraph (`.codegraph/` exists at the repo root). Use i
 
 The index is small (only `src/`); if a symbol is absent or stale, re-index with `codegraph init` — never edit `.codegraph/` by hand.
 
-Fresh Vite scaffold (React 19 + TypeScript). There is no domain code yet — `src/` is default template boilerplate (`App.tsx`, `main.tsx`, CSS). No router, state library, backend, or tests are installed. Not a git repo yet.
+Vite 8 + React 19 + TypeScript 6. `src/` has a basic chat skeleton UI (`components/chat/`) on antd, fed by local mock data — Redux is installed but not yet wired up. Git repo on branch `main`. No router, backend, or tests are installed.
+
+## UI & state
+
+- **antd v6** is the UI library (`antd`). Before building components, load the repo-local skill `.agents/skills/ant-design/SKILL.md` (component selection, theming/tokens, a11y, chat UI patterns).
+- **antd API lookup**: the skill's CLI workflow (`antd info`) is NOT used — `@ant-design/cli` is intentionally not installed. Read the official docs instead, via `https://ant.design/llms.txt`: per-component markdown at `https://ant.design/components/{component}.md` (e.g. `input`, `menu`, `avatar`, `layout`).
+- **Redux Toolkit** (`@reduxjs/toolkit`) + **react-redux** for global state.
+- Chat state lives in `App.tsx` (`useState`) with mock data from `src/data/mock.ts` — the wiring point for Redux/backend later. No router or Redux store is set up yet.
 
 ## Commands
 
@@ -34,3 +41,7 @@ These are set in `tsconfig.app.json`/`tsconfig.node.json` and are easy to trip o
 
 - ESLint (`eslint.config.js`) is flat config, not type-aware, and already includes the `react-hooks` and `react-refresh` plugins. The `react-refresh` rule only allows exporting components from files — don't add non-component exports to component files.
 - `vite.config.ts` is minimal (React plugin only). No proxy, aliases, or env handling is set up.
+
+## Keeping this file accurate
+
+When architecture, the tech stack, or any convention you rely on changes (e.g. wiring antd/Redux, adding a router/backend, or switching an API lookup source such as the antd CLI vs `llms.txt`), update this file so future sessions don't act on stale assumptions.
