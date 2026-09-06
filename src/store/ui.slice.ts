@@ -1,4 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import { conversationApi } from "./conversations.api";
 
 interface UIStore {
   activeConversationId?: string;
@@ -13,6 +14,13 @@ const uiSlice = createSlice({
     setActiveConversation(state, action: PayloadAction<string>) {
       state.activeConversationId = action.payload;
     }
+  },
+  extraReducers(builder) {
+    builder.addCase
+    builder.addMatcher(conversationApi.endpoints.getConversations.matchFulfilled, (state, action) => {
+      if (state.activeConversationId) return;
+      state.activeConversationId = action.payload[0].conversationId;
+    });
   },
 });
 

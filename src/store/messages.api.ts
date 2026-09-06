@@ -2,11 +2,12 @@ import { createApi } from "@reduxjs/toolkit/query/react";
 import { getMockBaseFn } from "./store.utils";
 import type { Message } from "../types";
 import { db } from "../mocks/db.mock";
+import { conversationApi } from "./conversations.api";
 
 export const messageApi = createApi({
   reducerPath: "messageApi",
   baseQuery: getMockBaseFn,
-  tagTypes: ["message"],
+  tagTypes: ["conversation"],
   endpoints: (builder) => ({
     getMessages: builder.query<Message[], string>({
       query: (conversationId) => () => db.getMessages(conversationId),
@@ -20,6 +21,11 @@ export const messageApi = createApi({
           messageApi.util.updateQueryData("getMessages", params.conversationId, (draft) => {
             draft.push(data);
           }),
+        );
+        dispatch(
+          conversationApi.util.invalidateTags([
+            { type: "conversation", id: params.conversationId },
+          ]),
         );
       },
     }),

@@ -9,7 +9,7 @@ const { TextArea } = Input;
 
 function MessageComposer() {
   const [text, setText] = useState("");
-  const [sendMessage] = messageApi.useSendMessageMutation();
+  const [sendMessage, { isLoading }] = messageApi.useSendMessageMutation();
   const activeConversationId = useSelector(
     (state: RootState) => state.ui.activeConversationId,
   );
@@ -46,6 +46,7 @@ function MessageComposer() {
         shape="circle"
         icon={<SendOutlined />}
         onClick={handleSend}
+        loading={isLoading}
         disabled={!text.trim()}
         aria-label="Enviar mensaje"
       />

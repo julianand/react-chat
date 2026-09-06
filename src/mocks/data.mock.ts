@@ -14,12 +14,12 @@ export const usersMock: User[] = [
 ];
 
 export const userConversationMock: UserConversation[] = [
-  { userId: 'u0', conversationId: 'c1' },
-  { userId: 'u1', conversationId: 'c1' },
-  { userId: 'u0', conversationId: 'c2' },
-  { userId: 'u2', conversationId: 'c2' },
-  { userId: 'u0', conversationId: 'c3' },
-  { userId: 'u3', conversationId: 'c3' },
+  { userId: 'u0', conversationId: 'c1', read: true },
+  { userId: 'u1', conversationId: 'c1', read: true },
+  { userId: 'u0', conversationId: 'c2', read: true },
+  { userId: 'u2', conversationId: 'c2', read: true },
+  { userId: 'u0', conversationId: 'c3', read: true },
+  { userId: 'u3', conversationId: 'c3', read: true },
 ];
 
 export const messagesMock: Message[] = [
