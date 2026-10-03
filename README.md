@@ -124,5 +124,3 @@ The current user is hardcoded as `"u0"` throughout the app; there is no authenti
 
 - **Network dependency**: the incoming-message simulator fetches from `https://dummyjson.com`; without network access the fetch rejects and produces unhandled errors every 10s tick.
 - No real backend — all data is in-memory and resets on page reload.
-
-See the [Roadmap](#-roadmap) for what's planned next.
